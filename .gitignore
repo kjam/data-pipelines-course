@@ -1,4 +1,5 @@
 config/*
+*/config/*
 *~
 *.pyc
 venv/*

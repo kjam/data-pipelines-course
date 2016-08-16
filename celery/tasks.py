@@ -1,8 +1,10 @@
 ''' Task module for showing celery functionality. '''
 from pandas_datareader import data
+from celeryapp import app
 import pandas as pd
 
 
+@app.task
 def get_stock_info(stock, start, end, source='yahoo'):
     ''' Collect aggregate info for a stock given a daterange.
         params:
@@ -37,6 +39,7 @@ def calc_ratio(price, compare):
     return round(((price / compare) - 1) * 100, 2)
 
 
+@app.task
 def price_range(stock, start, end, source='yahoo'):
     ''' Compare today's date to see if it is near max or min of closing prices
         in certain daterange.

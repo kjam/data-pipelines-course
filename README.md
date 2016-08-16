@@ -16,6 +16,10 @@ or
 
 ```pip install -r py3_requirements.txt```
 
+### Yahoo Finance API
+
+There is a [good writeup in German for the Finance API](http://brusdeylins.info/tips_and_tricks/yahoo-finance-api/) which I used as a starting point to download newer-time data.
+
 ### Python2 v. Python3
 
 This repository is primarily compliant for both versions. Please let me know if you run into any bugs!
