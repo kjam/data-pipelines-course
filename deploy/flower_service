@@ -3,6 +3,7 @@ Description=celery flower
 After=syslog.target
 
 [Service]
+Environment=DEPLOY=PROD
 ExecStart=/home/deploy/venv/bin/celery flower -A tasks --port=5566 --basic_auth=admin:getouttahere  
 # Requires systemd version 211 or newer
 WorkingDirectory=/var/www/pipelines/celery_app

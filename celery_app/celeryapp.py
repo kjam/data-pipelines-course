@@ -1,9 +1,13 @@
 ''' Celery settings and app '''
 from celery import Celery
 from configparser import ConfigParser
+import os
 
 config = ConfigParser()
-config.read('config/dev.cfg')
+if os.environ.get('DEPLOY') == 'PROD':
+    config.read('config/prod.cfg')
+else:
+    config.read('config/dev.cfg')
 
 app = Celery('tasks', broker=config.get('celery', 'broker_url'))
 

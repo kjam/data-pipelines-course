@@ -3,6 +3,7 @@ Description=celery
 After=syslog.target network.target
 
 [Service]
+Environment=DEPLOY=PROD
 ExecStart=/home/deploy/venv/bin/celery multi start 4 -A  tasks --loglevel=debug --logfile=/var/log/celery/%N.log 
 ExecStop=/home/deploy/venv/bin/celery multi stopwait 4 -A tasks 
 ExecReload=/home/deploy/venv/bin/celery multi restart 4 -A tasks --loglevel=debug --logfile=/var/log/celery/%N.log 
