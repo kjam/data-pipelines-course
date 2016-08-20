@@ -1,0 +1,18 @@
+[Unit]
+Description=celery flower
+After=syslog.target
+
+[Service]
+ExecStart=/home/deploy/venv/bin/celery flower -A tasks --port=5566 --basic_auth=admin:getouttahere  
+# Requires systemd version 211 or newer
+WorkingDirectory=/var/www/pipelines/celery_app
+Restart=always
+KillSignal=SIGTERM
+Type=simple
+StandardError=syslog
+NotifyAccess=all
+User=deploy
+Group=deploy
+
+[Install]
+WantedBy=multi-user.target

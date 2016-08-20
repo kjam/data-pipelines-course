@@ -1,0 +1,18 @@
+[Unit]
+Description=celery 
+After=syslog.target network.target
+
+[Service]
+ExecStart=/home/deploy/venv/bin/celery multi start 4 -A  tasks --loglevel=debug --logfile=/var/log/celery/%N.log 
+ExecStop=/home/deploy/venv/bin/celery multi stopwait 4 -A tasks 
+ExecReload=/home/deploy/venv/bin/celery multi restart 4 -A tasks --loglevel=debug --logfile=/var/log/celery/%N.log 
+# Requires systemd version 211 or newer
+WorkingDirectory=/var/www/pipelines/celery_app
+Type=forking
+StandardError=syslog
+User=deploy
+Group=deploy
+TimeoutSec=3600
+
+[Install]
+WantedBy=multi-user.target
