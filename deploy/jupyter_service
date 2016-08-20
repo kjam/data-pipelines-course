@@ -1,0 +1,14 @@
+[Unit]
+Description=jupyter
+
+[Service]
+PIDFile=/var/run/jupyter.pid
+ExecStart=/home/deploy/venv/bin/python jupyter notebook --no-browser --pylab=inline
+KillSignal=SIGTERM
+WorkingDirectory=/var/www/pipelines/
+
+[Install]
+WantedBy=multi-user.target
+
+
+

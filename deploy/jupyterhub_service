@@ -1,0 +1,9 @@
+[Unit]
+Description=Jupyterhub
+
+[Service]
+User=root
+ExecStart=/home/deploy/venv/jupyterhub --JupyterHub.spawner_class=sudospawner.SudoSpawner
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,47 @@
+---
+- hosts: pipelines
+  sudo: yes
+
+  tasks:
+    - name: update
+      apt: update_cache=yes
+
+    - name: install pip
+      apt: name=python-pip state=installed
+
+    - name: virtualenv
+      easy_install: name=virtualenv
+
+    - name: rabbitmq
+      apt: name=rabbitmq-server state=installed
+
+    - name: change app perms to fetch
+      file: path=/var/www/pipelines mode=0777 recurse=yes state=directory
+      ignore_errors: yes
+    
+    - name: copy ssh files
+      sudo_user: deploy
+      copy: src=~/.ssh/deploy dest=/home/deploy/.ssh/
+
+    - name: change ssh perms
+      sudo_user: deploy                                           
+      file: path=/home/deploy/.ssh/deploy owner=deploy group=deploy mode=0400    
+    
+    - name: fetch application
+      sudo_user: deploy
+      git: repo=git@github.org:kjam/data-pipelines-course.git dest=/var/www/pipelines key_file=~/.ssh/deploy accept_hostkey=yes force=yes
+
+    - name: install requirements
+      pip: requirements=/var/www/pipelines/requirements.txt virtualenv=/home/deploy/venv
+
+    - name: startup celery
+      shell: cd /var/www/pipelines/celery && /home/deploy/venv/bin/python celery multi -A tasks
+
+    - name: change sysd perms
+      file: path=/var/www/pipelines/deploy/jupyter_service mode=0555 
+    
+    - name: link jupyter systemd file
+      file: src=/var/www/pipelines/deploy/jupyter_service dest=/etc/systemd/system/jupyter.service state=link
+
+    - name: reload systemd
+      shell: systemctl daemon-reload && systemctl start jupyter
