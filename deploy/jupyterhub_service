@@ -4,6 +4,7 @@ Description=Jupyterhub
 [Service]
 User=root
 Environment=PYTHONPATH=/home/deploy/venv/bin/python
+WorkingDirectory=/var/www/pipelines/notebooks
 ExecStart=/home/deploy/venv/bin/jupyterhub --JupyterHub.spawner_class=sudospawner.SudoSpawner
 
 [Install]
