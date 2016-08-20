@@ -5,7 +5,7 @@ Description=Jupyterhub
 User=root
 Environment=PYTHONPATH=/home/deploy/venv/bin/python
 WorkingDirectory=/var/www/pipelines/notebooks
-ExecStart=/home/deploy/venv/bin/jupyterhub --JupyterHub.spawner_class=sudospawner.SudoSpawner
+ExecStart=/home/deploy/venv/bin/jupyterhub -f /var/www/pipelines/notebooks/jupyterhub_config.py
 
 [Install]
 WantedBy=multi-user.target
