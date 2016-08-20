@@ -3,6 +3,7 @@ Description=Jupyterhub
 
 [Service]
 User=root
+Environment=PYTHONPATH=/home/deploy/venv/bin/python
 ExecStart=/home/deploy/venv/bin/jupyterhub --JupyterHub.spawner_class=sudospawner.SudoSpawner
 
 [Install]
