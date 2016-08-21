@@ -3,6 +3,8 @@
   become: yes
 
   tasks:
+    - include_vars: pipelines_variables.yml
+    
     - name: get jessie backports
       apt_repository: repo='deb http://ftp.debian.org/debian jessie-backports main' state=present
     
@@ -91,7 +93,7 @@
       file: path=/var/www/pipelines/celery_app/config state=directory owner=deploy mode=0755 recurse=yes
       
     - name: copy config to celery dir
-      copy: src=../data_pipelines_course/celery_app/config/prod.cfg dest=/var/www/pipelines/celery_app/config
+      copy: src=../celery_app/config/prod.cfg dest=/var/www/pipelines/celery_app/config
 
     - name: copy config to nb dir
       copy: src=templates/jupyterhub_config.py dest=/var/www/pipelines/notebooks
