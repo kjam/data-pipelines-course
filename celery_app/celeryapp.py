@@ -5,9 +5,9 @@ import os
 
 config = ConfigParser()
 if os.environ.get('DEPLOY') == 'PROD':
-    config.read('config/prod.cfg')
+    config.read(os.path.join(os.getcwd(), 'config/prod.cfg'))
 else:
-    config.read('config/dev.cfg')
+    config.read(os.path.join(os.getcwd(), 'config/dev.cfg'))
 
 app = Celery('tasks', broker=config.get('celery', 'broker_url'))
 
