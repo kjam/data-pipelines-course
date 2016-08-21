@@ -1,10 +1,13 @@
 [Unit]
 Description=Jupyterhub
+After=syslog.target network.target
+
 
 [Service]
 User=root
 Environment=PYTHONPATH=/home/deploy/venv/bin/python
-WorkingDirectory=/var/www/pipelines/notebooks
+Environment=CONFIGPROXY_AUTH_TOKEN=`openssl rand -hex 32`
+Environment=VIRTUAL_ENV=/home/deploy/venv
 ExecStart=/home/deploy/venv/bin/jupyterhub -f /var/www/pipelines/notebooks/jupyterhub_config.py
 
 [Install]
