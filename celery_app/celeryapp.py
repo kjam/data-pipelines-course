@@ -3,11 +3,14 @@ from celery import Celery
 from configparser import ConfigParser
 import os
 
+
+
 config = ConfigParser()
+current_dir = os.path.dirname(os.path.realpath(__file__))
 if os.environ.get('DEPLOY') == 'PROD':
-    config.read(os.path.join(os.getcwd(), 'config/prod.cfg'))
+    config.read(os.path.join(current_dir, 'config/prod.cfg'))
 else:
-    config.read(os.path.join(os.getcwd(), 'config/dev.cfg'))
+    config.read(os.path.join(current_dir, 'config/dev.cfg'))
 
 app = Celery('tasks', broker=config.get('celery', 'broker_url'))
 
