@@ -9,6 +9,7 @@ Environment=PYTHONPATH=/home/deploy/venv/bin/python
 Environment=CONFIGPROXY_AUTH_TOKEN=`openssl rand -hex 32`
 Environment=VIRTUAL_ENV=/home/deploy/venv
 ExecStart=/home/deploy/venv/bin/jupyterhub -f /var/www/pipelines/notebooks/jupyterhub_config.py
+WorkingDirectory=/var/www/pipelines/notebooks
 
 [Install]
 WantedBy=multi-user.target
