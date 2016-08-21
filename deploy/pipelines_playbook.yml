@@ -1,47 +1,122 @@
 ---
 - hosts: pipelines
-  sudo: yes
+  become: yes
 
   tasks:
+    - name: get jessie backports
+      apt_repository: repo='deb http://ftp.debian.org/debian jessie-backports main' state=present
+    
     - name: update
       apt: update_cache=yes
 
-    - name: install pip
-      apt: name=python-pip state=installed
+    - name: install fail2ban
+      apt: pkg=fail2ban state=installed
+
+    - name: add deploy user
+      user: name=deploy shell=/bin/bash password={{ deploy_pass }}
+
+    - name: add ssh dir
+      file: path=/home/deploy/.ssh state=directory owner=deploy group=deploy mode=0700 
+
+    - name: move key to deploy user folder
+      become_user: deploy
+      copy: src=~/.ssh/katharine.pub dest=/home/deploy/.ssh/authorized_keys
+
+    - name: copy ssh deploy key files
+      become_user: deploy
+      copy: src=~/.ssh/deploy dest=/home/deploy/.ssh/
+      
+    - name: change perms for ssh
+      file: path=/home/deploy/.ssh/deploy owner=deploy group=deploy mode=0400 
+    
+    - name: change sshd
+      copy: src=templates/sshd_config dest=/etc/ssh/sshd_config
+      notify:
+          - restart ssh 
+
+    - name: install pip3
+      apt: name=python3-pip state=installed
 
     - name: virtualenv
-      easy_install: name=virtualenv
+      shell: pip3 install virtualenv
+     
+    - name: install sqlite
+      apt: pkg=sqlite3 state=installed 
+
+    - name: install npm http proxy
+      npm: name=configurable-http-proxy global=yes state=present
+
+    - name: install python crypto
+      apt: name=python-cryptography state=installed install_recommends=yes
+      
+    - name: install certbot
+      apt: name=certbot state=installed install_recommends=yes default_release=jessie-backports
+    
+    - name: install letsencrypt
+      apt: name=letsencrypt state=installed install_recommends=yes
+
+    - name: run certbot
+      shell: certbot certonly --standalone -d {{ deploy_url }} --standalone-supported-challenges tls-sni-01 -n -m {{ deploy_email }} --keep-until-expiring  
 
     - name: rabbitmq
       apt: name=rabbitmq-server state=installed
 
+    - name: npm
+      apt: name=npm state=installed
+          
+    - name: nodejs
+      apt: name=nodejs-legacy state=installed
+    
+    - name: git
+      apt: name=git state=installed
+
     - name: change app perms to fetch
       file: path=/var/www/pipelines mode=0777 recurse=yes state=directory
       ignore_errors: yes
-    
-    - name: copy ssh files
-      sudo_user: deploy
-      copy: src=~/.ssh/deploy dest=/home/deploy/.ssh/
 
-    - name: change ssh perms
-      sudo_user: deploy                                           
-      file: path=/home/deploy/.ssh/deploy owner=deploy group=deploy mode=0400    
-    
     - name: fetch application
-      sudo_user: deploy
-      git: repo=git@github.org:kjam/data-pipelines-course.git dest=/var/www/pipelines key_file=~/.ssh/deploy accept_hostkey=yes force=yes
+      become_user: deploy
+      git: repo=git@github.com:kjam/data-pipelines-course.git dest=/var/www/pipelines key_file=~/.ssh/deploy accept_hostkey=yes force=yes
 
     - name: install requirements
       pip: requirements=/var/www/pipelines/requirements.txt virtualenv=/home/deploy/venv
 
-    - name: startup celery
-      shell: cd /var/www/pipelines/celery && /home/deploy/venv/bin/python celery multi -A tasks
+    - name: make notebooks directory 
+      file: path=/var/www/pipelines/notebooks state=directory owner=deploy mode=0755 recurse=yes
+    
+    - name: make notebooks cookiefile 
+      file: path=/var/www/pipelines/notebooks/jupyterhub_cookie_secret mode=0600 state=touch
+  
+    - name: make celery config directory 
+      file: path=/var/www/pipelines/celery_app/config state=directory owner=deploy mode=0755 recurse=yes
+      
+    - name: copy config to celery dir
+      copy: src=../data_pipelines_course/celery_app/config/prod.cfg dest=/var/www/pipelines/celery_app/config
+
+    - name: copy config to nb dir
+      copy: src=templates/jupyterhub_config.py dest=/var/www/pipelines/notebooks
+
+    - name: make log dir
+      file: path=/var/log/celery state=directory owner=deploy mode=0755 recurse=yes
 
     - name: change sysd perms
-      file: path=/var/www/pipelines/deploy/jupyter_service mode=0555 
+      file: path=/var/www/pipelines/deploy mode=0644 recurse=yes
+
+    - name: link flower systemd file
+      file: src=/var/www/pipelines/deploy/flower_service dest=/etc/systemd/system/flower.service state=link
+
+    - name: link celery systemd file
+      file: src=/var/www/pipelines/deploy/celery_service dest=/etc/systemd/system/celery.service state=link
     
-    - name: link jupyter systemd file
-      file: src=/var/www/pipelines/deploy/jupyter_service dest=/etc/systemd/system/jupyter.service state=link
+    - name: link jupyterhub systemd file
+      file: src=/var/www/pipelines/deploy/jupyterhub_service dest=/etc/systemd/system/jupyterhub.service state=link
+    
+    #- name: link jupyter systemd file
+    #  file: src=/var/www/pipelines/deploy/jupyter_service dest=/etc/systemd/system/jupyterhub.service state=link
 
     - name: reload systemd
-      shell: systemctl daemon-reload && systemctl start jupyter
+      shell: systemctl daemon-reload && systemctl restart jupyterhub
+
+    - name: start flower & celery
+      shell: systemctl restart celery && systemctl restart flower
+
