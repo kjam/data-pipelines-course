@@ -123,7 +123,10 @@
 
     - name: link celery systemd file
       file: src=/var/www/pipelines/deploy/celery_service dest=/etc/systemd/system/celery.service state=link
-    
+   
+    - name: link celerybeat systemd file
+      file: src=/var/www/pipelines/deploy/celerybeat_service dest=/etc/systemd/system/celerybeat.service state=link
+
     - name: link jupyterhub systemd file
       file: src=/var/www/pipelines/deploy/jupyterhub_service dest=/etc/systemd/system/jupyterhub.service state=link
     
@@ -133,6 +136,9 @@
     - name: reload systemd
       shell: systemctl daemon-reload && systemctl restart jupyterhub
 
-    - name: start flower & celery
-      shell: systemctl restart celery && systemctl restart flower
-
+    - name: start flower & celery & celerybeat
+      shell: systemctl restart celery && systemctl restart flower && systemctl restart celerybeat
+  
+  handlers:
+    - name: restart rabbitmq
+      service: name=rabbitmq-server state=restarted
