@@ -22,12 +22,15 @@
 
     - name: move key to deploy user folder
       become_user: deploy
-      copy: src=~/.ssh/katharine.pub dest=/home/deploy/.ssh/authorized_keys
+      copy: src=~/.ssh/authorized_keys dest=/home/deploy/.ssh/authorized_keys
 
     - name: copy ssh deploy key files
       become_user: deploy
       copy: src=~/.ssh/deploy dest=/home/deploy/.ssh/
       
+    - name: Allow deploy to have sudo
+      lineinfile: dest=/etc/sudoers state=present line='deploy  ALL=(ALL:ALL) ALL'
+
     - name: change perms for ssh
       file: path=/home/deploy/.ssh/deploy owner=deploy group=deploy mode=0400 
     
