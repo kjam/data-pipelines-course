@@ -101,6 +101,17 @@
     - name: make log dir
       file: path=/var/log/celery state=directory owner=deploy mode=0755 recurse=yes
 
+    - name: rabbitmq add vhost
+      rabbitmq_vhost: name=celery_vhost state=present
+
+    - name: add rabbitmq user
+      rabbitmq_user: user=celery_user password={{ rabbitmq_pass }} vhost=celery_vhost configure_priv=.* read_priv=.* write_priv=.* tags=administrator state=present
+
+    - name: enabling rabbitmq management 
+      rabbitmq_plugin: names=rabbitmq_management state=enabled
+      notify:
+          - restart rabbitmq
+
     - name: change sysd perms
       file: path=/var/www/pipelines/deploy mode=0644 recurse=yes
 

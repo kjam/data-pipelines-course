@@ -1,3 +1,4 @@
 deploy_url: pipelines.kjamistan.com
-deploy_pass: PUT_SHA_PW_HERE
+deploy_pass: PUT_SHA1_PW_HERE
 deploy_email: katharine@kjamistan.com
+rabbitmq_pass: PUT_PLAINTEXT_PASS_HERE
