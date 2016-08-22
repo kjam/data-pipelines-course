@@ -24,6 +24,12 @@ There is a [good writeup in German for the Finance API](http://brusdeylins.info/
 
 This repository is primarily compliant for both versions. Please let me know if you run into any bugs!
 
+
+### Ansible Playbook
+
+To use as a template rather than as a direct template, I've included a working playbook in the deploy folder. If you try and run it directly, you will likely receive some errors. Please read through the notebook and take a look at the directives and determine which you need and which you don't. It also requires a .ssh/authorized_hosts file as well as a config file located in `celeryapp/config/prod.cfg`. If you run into other errors, I highly recommend reading through [the Ansible
+documentation](http://docs.ansible.com/ansible/) or searching on StackOverflow.
+
 ### Corrections?
 
 If you find any issues in these code examples, feel free to submit an Issue or Pull Request. I appreciate your input!
