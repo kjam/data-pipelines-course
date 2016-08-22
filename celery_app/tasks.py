@@ -1,7 +1,9 @@
 ''' Task module for showing celery functionality. '''
 from pandas_datareader import data
 from celeryapp import app
+from urllib.error import HTTPError, URLError
 import pandas as pd
+import logging
 
 
 @app.task
@@ -16,6 +18,7 @@ def get_stock_info(stock, start, end, source='yahoo'):
         returns:
             json
     '''
+    logging.debug('start and end types are: %s %s', type(start), type(end))
     df = data.DataReader(stock, source, start, end)
     df['Stock'] = stock
     agg = df.groupby('Stock').agg({
@@ -39,8 +42,8 @@ def calc_ratio(price, compare):
     return round(((price / compare) - 1) * 100, 2)
 
 
-@app.task
-def price_range(stock, start, end, source='yahoo'):
+@app.task(bind=True)
+def price_range(self, stock, start, end, source='yahoo'):
     ''' Compare today's date to see if it is near max or min of closing prices
         in certain daterange.
     params:
@@ -65,7 +68,12 @@ def price_range(stock, start, end, source='yahoo'):
         'period_end': end,
     }
     url = 'http://finance.yahoo.com/d/quotes.csv?s={}&f=sat1'.format(stock)
-    td = pd.read_csv(url, names=['Stock', 'Price', 'Last Trade'])
+    try:
+        td = pd.read_csv(url, names=['Stock', 'Price', 'Last Trade'])
+    except (HTTPError, URLError) as exc:
+        logging.exception('pandas read_csv error for yahoo finance URL: %s',
+                          url)
+        raise self.retry(exc=exc)
     td_price = td['Price'].mean()
     resp['todays_price'] = td_price
     if abs(td_price - period_high) < abs(td_price - period_low):

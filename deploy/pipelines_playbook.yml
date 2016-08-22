@@ -63,6 +63,9 @@
     - name: rabbitmq
       apt: name=rabbitmq-server state=installed
 
+    - name: redis
+      apt: name=redis-server state=installed
+
     - name: npm
       apt: name=npm state=installed
           

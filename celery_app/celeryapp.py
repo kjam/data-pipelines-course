@@ -1,5 +1,6 @@
 ''' Celery settings and app '''
 from celery import Celery
+from kombu import Queue
 from configparser import ConfigParser
 import os
 
@@ -18,13 +19,19 @@ CELERY_CONFIG = {
     'CELERY_IMPORTS': ['tasks'],
     'CELERY_IGNORE_RESULT': False,
     'CELERY_TRACK_STARTED': True,
+    'CELERY_DEFAULT_QUEUE': 'default',
+    'CELERY_QUEUES': (Queue('default'), Queue('priority'),),
     'CELERY_DEFAULT_RATE_LIMIT': '20/s',
-    'CELERY_RESULT_BACKEND': 'rpc://',
+    'CELERY_RESULT_BACKEND': 'amqp://',
     'CELERY_CHORD_PROPAGATES': True,
     'CELERYD_TASK_TIME_LIMIT': 7200,
     'CELERYD_POOL_RESTARTS': True,
     'CELERYD_TASK_LOG_FORMAT':
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    'CELERY_ANNOTATIONS': {
+        'celery.chord_unlock': {'hard_time_limit': 360},
+    },
+
 }
 
 app.conf.update(**CELERY_CONFIG)
