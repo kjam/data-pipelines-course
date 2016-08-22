@@ -74,3 +74,28 @@ def price_range(stock, start, end, source='yahoo'):
         resp['result'] = 'lower'
     resp['percent_change'] = calc_ratio(td_price, period_mean)
     return resp
+
+
+@app.task
+def determine_buy(result):
+    ''' Extremely naive buy logic (for example's sake)
+    params:
+        result: json result from price_range task
+    return:
+        boolean
+    '''
+    if result['result'] == 'lower':
+        return True
+    return False
+
+
+@app.task
+def sort_results(results, key='todays_price'):
+    ''' Sort by given key, defaults to todays_price
+    params:
+        results: list of results from price_range task
+    kwargs:
+        key: str (must be in price_range return dictionary)
+    return sorted list
+    '''
+    return sorted(results, key=lambda x: x[key])
