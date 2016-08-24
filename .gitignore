@@ -1,5 +1,7 @@
 config/*
 */config/*
+*.db
+*.log
 *~
 *.pyc
 venv/*
