@@ -44,7 +44,13 @@
 
     - name: virtualenv
       shell: pip3 install virtualenv
-     
+
+    - name: install hdf5
+      apt: pkg=libhdf5-dev state=installed install_recommends=yes
+    
+    - name: install hdf5 tools
+      apt: pkg=hdf5-tools state=installed install_recommends=yes
+
     - name: install sqlite
       apt: pkg=sqlite3 state=installed 
 
@@ -74,7 +80,10 @@
           
     - name: nodejs
       apt: name=nodejs-legacy state=installed
-    
+
+    - name: graphviz
+      apt: name=graphviz state=installed
+
     - name: git
       apt: name=git state=installed
 
@@ -88,6 +97,8 @@
 
     - name: install requirements
       pip: requirements=/var/www/pipelines/requirements.txt virtualenv=/home/deploy/venv
+      environment: 
+          HDF5_DIR: /usr/lib/x86_64-linux-gnu/hdf5/serial/  
 
     - name: make notebooks directory 
       file: path=/var/www/pipelines/notebooks state=directory owner=deploy mode=0755 recurse=yes
