@@ -145,3 +145,6 @@
   handlers:
     - name: restart rabbitmq
       service: name=rabbitmq-server state=restarted
+
+    - name: restart ssh
+      service: name=ssh state=restarted
