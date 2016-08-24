@@ -4,7 +4,7 @@ Babel==2.3.4
 backports-abc==0.4
 billiard==3.3.0.23
 boto3==1.4.0
-botocore==1.4.47
+botocore==1.4.49
 celery==3.1.23
 click==6.6
 cloudpickle==0.2.1
@@ -52,7 +52,7 @@ pyzmq==15.4.0
 redis==2.10.5
 requests==2.11.1
 requests-file==1.4
-s3fs==0.0.6
+s3fs==0.0.7
 s3transfer==0.1.2
 scipy==0.18.0
 simplegeneric==0.8.1
