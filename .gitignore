@@ -2,6 +2,8 @@ data/*.json.gz
 *.png
 config/*
 */config/*
+*.db
+*.log
 *~
 *.pyc
 venv/*
