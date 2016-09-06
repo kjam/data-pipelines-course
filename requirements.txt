@@ -22,6 +22,7 @@ h5py==2.6.0
 ipykernel==4.4.1
 ipython==5.1.0
 ipython-genutils==0.1.0
+ipywidgets==5.2.2
 itsdangerous==0.24
 Jinja2==2.8
 jmespath==0.9.0
@@ -71,3 +72,4 @@ tornado==4.4.1
 traitlets==4.2.2
 wcwidth==0.1.7
 Werkzeug==0.11.10
+widgetsnbextension==1.2.6
