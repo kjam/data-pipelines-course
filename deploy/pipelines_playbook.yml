@@ -54,6 +54,12 @@
     - name: install sqlite
       apt: pkg=sqlite3 state=installed 
 
+    - name: npm
+      apt: name=npm state=installed
+          
+    - name: nodejs
+      apt: name=nodejs-legacy state=installed
+
     - name: install npm http proxy
       npm: name=configurable-http-proxy global=yes state=present
 
@@ -67,19 +73,13 @@
       apt: name=letsencrypt state=installed install_recommends=yes
 
     - name: run certbot
-      shell: certbot certonly --standalone -d {{ deploy_url }} --standalone-supported-challenges tls-sni-01 -n -m {{ deploy_email }} --keep-until-expiring  
+      shell: certbot certonly --standalone -d {{ deploy_url }} --standalone-supported-challenges tls-sni-01 -n -m {{ deploy_email }} --keep-until-expiring --agree-tos  
 
     - name: rabbitmq
       apt: name=rabbitmq-server state=installed
 
     - name: redis
       apt: name=redis-server state=installed
-
-    - name: npm
-      apt: name=npm state=installed
-          
-    - name: nodejs
-      apt: name=nodejs-legacy state=installed
 
     - name: graphviz
       apt: name=graphviz state=installed
