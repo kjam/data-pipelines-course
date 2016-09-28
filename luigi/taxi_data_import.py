@@ -64,12 +64,12 @@ class AddTaxiLocations(luigi.Task):
     """ Import the files and add the locations using Google Reverse Search. """
     dir_name = luigi.Parameter(default='/tmp/taxi_data/')
 
-    #def requires(self):
-    #    return DownloadTaxiData()
+    def requires(self):
+        return DownloadTaxiData()
 
     def input(self):
         return [luigi.LocalTarget('/tmp/taxi_data/{}'.format(fn)) for fn
-                in os.listdir(self.dir_name)]
+                in os.listdir(self.dir_name) if fn.endswith('csv')]
 
     def run(self):
         for fn in self.input():
