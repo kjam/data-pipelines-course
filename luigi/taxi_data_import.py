@@ -21,7 +21,7 @@ class DownloadTaxiUrls(luigi.Task):
     def run(self):
         resp = requests.get(self.url_list)
         urls = []
-        possible_strs = ['{}-{%02d}'.format(self.year, m) for m in self.months]
+        possible_strs = ['{}-{:02d}'.format(self.year, m) for m in self.months]
         for line in resp.iter_lines():
             if self.cab_type in str(line):
                 for datestr in possible_strs:
