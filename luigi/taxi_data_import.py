@@ -19,7 +19,7 @@ class DownloadTaxiUrls(luigi.Task):
         resp = requests.get(self.url_list)
         urls = []
         for line in resp.iter_lines():
-            if 'yellow' in str(line):
+            if 'yellow' in str(line) and '2016' in str(line):
                 urls.append(line)
         with self.output().open('w') as url_file:
             for url in urls:
