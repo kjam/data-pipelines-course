@@ -1,0 +1,14 @@
+[Unit]
+Description=Luigi
+After=syslog.target network.target
+
+[Service]
+User=root
+Environment=PYTHONPATH=/home/katharine/venv/bin/python
+Environment=VIRTUAL_ENV=/home/katharine/venv
+Environment=DEPLOY=PROD
+ExecStart=/home/katharine/venv/bin/luigid --logdir /var/log/luigi --pidfile /var/run/luigi.pid
+WorkingDirectory=/var/www/pipelines
+
+[Install]
+WantedBy=multi-user.target
