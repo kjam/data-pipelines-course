@@ -48,6 +48,12 @@ class DownloadTaxiData(luigi.Task):
         for url in self.input().open('r'):
             yield DownloadTaxiFile(url.rstrip('\n'))
 
+    def output(self):
+        files = [url.rstrip('\n').split('/')[-1]
+                 for url in self.input().open('r')]
+        return [luigi.LocalTarget('/tmp/taxi_data/{}'.format(file_name))
+                for file_name in files]
+
 
 class DownloadTaxiFile(luigi.Task):
     """ Download each file, and save it locally to /tmp/taxi_data """
@@ -92,7 +98,7 @@ class AddTaxiLocation(luigi.Task):
         2009 and 2016 here. Feel free to expand this and send PR if you'd
         like to share!
     """
-    line = luigi.DictParameter(default={})
+    line = luigi.DictParameter()
 
     columns_2009 = ['vendor_name',
                     'Rate_Code', 'surcharge', 'store_and_forward',
@@ -116,6 +122,7 @@ class AddTaxiLocation(luigi.Task):
                'pickup_location_web', 'dropoff_location_name',
                'dropoff_location_phone', 'dropoff_location_addy',
                'dropoff_location_web']
+
 
     def add_addy_info(self, res, loc_type):
         if len(res.places):
