@@ -86,10 +86,16 @@ class AddTaxiLocations(luigi.Task):
 
 
 class AddTaxiLocation(luigi.Task):
-    """ Search for pickup and dropoff location and add them via Google API. """
+    """ Search for pickup and dropoff location and add them via Google API.
+        NOTE: it appears the names and mappings change over time, you will
+        need to adapt the code for different years. I've included columns for
+        2009 and 2016 here. Feel free to expand this and send PR if you'd
+        like to share!
+    """
     line = luigi.DictParameter(default={})
 
-    columns = ['vendor_name', 'Rate_Code', 'surcharge', 'store_and_forward',
+    columns_2009 = ['vendor_name',
+                    'Rate_Code', 'surcharge', 'store_and_forward',
                'mta_tax', 'Total_Amt', 'Fare_Amt', 'Tolls_Amt', 'Tip_Amt',
                'Trip_Pickup_DateTime', 'Trip_Dropoff_DateTime',
                'Passenger_Count', 'Payment_Type', 'Trip_Distance',
@@ -99,6 +105,17 @@ class AddTaxiLocation(luigi.Task):
                'dropoff_location_name', 'dropoff_location_phone',
                'dropoff_location_addy', 'dropoff_location_web']
 
+    columns = ['VendorID', 'RatecodeID', 'improvement_surcharge',
+               'store_and_fwd_flag', 'mta_tax', 'total_amount',
+               'fare_amount', 'extra', 'tip_amount',
+               'tpep_pickup_datetime', 'tpep_dropoff_datetime',
+               'passenger_count', 'payment_type', 'trip_distance',
+               'pickup_longitude', 'pickup_latitude', 'dropoff_longitude',
+               'dropoff_latitude', 'pickup_location_name',
+               'pickup_location_phone', 'pickup_location_addy',
+               'pickup_location_web', 'dropoff_location_name',
+               'dropoff_location_phone', 'dropoff_location_addy',
+               'dropoff_location_web']
 
     def add_addy_info(self, res, loc_type):
         if len(res.places):
@@ -114,11 +131,13 @@ class AddTaxiLocation(luigi.Task):
         config = ConfigParser()
         config.read('../config/prod.cfg')
         client = GooglePlaces(config.get('google', 'api_key'))
-        res = client.nearby_search(lat_lng={'lat': self.line['Start_Lat'],
-                                            'lng': self.line['Start_Lon']})
+        if len(set(self.line.keys()) - set(self.columns)) > 2:
+            self.columns = self.columns_2009
+        res = client.nearby_search(lat_lng={'lat': self.line[self.columns[15]],
+                                            'lng': self.line[self.columns[14]]})
         self.add_addy_info(res, 'pickup')
-        res = client.nearby_search(lat_lng={'lat': self.line['End_Lat'],
-                                            'lng': self.line['End_Lon']})
+        res = client.nearby_search(lat_lng={'lat': self.line[self.columns[17]],
+                                            'lng': self.line[self.columns[16]]})
         self.add_addy_info(res, 'dropoff')
         with self.output().open('w') as line_output:
             line_with_tabs = '\t'.join([self.line.get(key) if self.line.get(key)
