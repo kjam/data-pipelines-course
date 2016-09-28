@@ -8,3 +8,5 @@ config/*
 *.pyc
 venv/*
 *.*/
+*.pid
+*.db
