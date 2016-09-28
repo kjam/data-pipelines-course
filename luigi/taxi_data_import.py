@@ -13,14 +13,21 @@ import shutil
 
 class DownloadTaxiUrls(luigi.Task):
     """ Download NYC Taxi Data for our use. """
+    year = luigi.IntParameter(default=2016)
+    months = luigi.ListParameter(default=[6,7,8])
     url_list = luigi.Parameter(default='https://raw.githubusercontent.com/toddwschneider/nyc-taxi-data/master/raw_data_urls.txt')
+    cab_type = luigi.Parameter(default='yellow')
 
     def run(self):
         resp = requests.get(self.url_list)
         urls = []
+        possible_strs = ['{}-{%02d}'.format(self.year, m) for m in self.months]
         for line in resp.iter_lines():
-            if 'yellow' in str(line) and '2016' in str(line):
-                urls.append(line)
+            if self.cab_type in str(line):
+                for datestr in possible_strs:
+                    if datestr in str(line):
+                        urls.append(line)
+                        break
         with self.output().open('w') as url_file:
             for url in urls:
                 print(url.decode(), file=url_file)
