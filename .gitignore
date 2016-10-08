@@ -10,3 +10,9 @@ venv/*
 *.*/
 *.pid
 *.db
+
+# airflow configs / logs
+airflow.cfg
+unittest.cfg
+logs/*
+
