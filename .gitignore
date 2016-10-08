@@ -13,6 +13,6 @@ venv/*
 
 # airflow configs / logs
 airflow.cfg
-unittest.cfg
+unittests.cfg
 logs/*
 

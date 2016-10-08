@@ -12,8 +12,11 @@ import itertools
 import glob
 import shutil
 import pandas as pd
+import os.path
 
-RAW_TWEET_DIR = '{}/data/tweets'
+RAW_TWEET_DIR = os.path.abspath(os.path.join(__file__, '../../../data/tweets/'))
+
+print(RAW_TWEET_DIR)
 
 default_args = {
     'owner': 'admin',
