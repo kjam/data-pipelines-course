@@ -16,8 +16,6 @@ import os.path
 
 RAW_TWEET_DIR = os.path.abspath(os.path.join(__file__, '../../../data/tweets/'))
 
-print(RAW_TWEET_DIR)
-
 default_args = {
     'owner': 'admin',
     'depends_on_past': False,
@@ -150,7 +148,7 @@ id_popular = PythonOperator(task_id='identify_popular_links',
 
 
 email_links = EmailOperator(task_id='email_best_links',
-                            to='katharine@kjamistan.com',
+                            to='MYEMAIL@MYSITE.com',
                             subject='Latest popular links',
                             html_content='Check out the latest!!',
                             files=['{}/latest_links.txt'.format(RAW_TWEET_DIR)],
