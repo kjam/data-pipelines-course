@@ -1,0 +1,4 @@
+deploy_url: pipelines.foo.com
+deploy_pass: $6$rw0zQQOmZqt1KsDFksakjio291fSzScf3qGxedkxt249FfFskwonDDlsso$32onLzXth3ZHK0
+deploy_email: youremail@you.com
+rabbitmq_pass: hereisapasswordasanexample

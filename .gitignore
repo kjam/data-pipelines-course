@@ -10,6 +10,7 @@ venv/*
 *.*/
 *.pid
 *.db
+real_variables.yml
 data/tweets/*.csv
 
 # airflow configs / logs
