@@ -63,7 +63,7 @@ gen_search_terms = BranchPythonOperator(task_id='generate_search_terms',
 
 
 email_links = EmailOperator(task_id='email_best_links',
-                            to='katharine@kjamistan.com',
+                            to='MYEMAIL@MYSITE.com',
                             subject='Latest popular links',
                             html_content='Check out the latest!!',
                             files=['{}/latest_links.txt'.format(RAW_TWEET_DIR)],
