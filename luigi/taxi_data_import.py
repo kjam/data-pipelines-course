@@ -11,6 +11,8 @@ import requests
 import shutil
 
 
+CONFIG_FILE = os.path.abspath(os.path.join(__file__, '../config/prod.cfg'))
+
 class DownloadTaxiUrls(luigi.Task):
     """ Download NYC Taxi Data for our use. """
     year = luigi.IntParameter(default=2016)
@@ -136,7 +138,7 @@ class AddTaxiLocation(luigi.Task):
     def run(self):
         self.line = dict((k, v) for k,v in self.line.items())
         config = ConfigParser()
-        config.read('../config/prod.cfg')
+        config.read(CONFIG_FILE)
         client = GooglePlaces(config.get('google', 'api_key'))
         if len(set(self.line.keys()) - set(self.columns)) > 2:
             self.columns = self.columns_2009
