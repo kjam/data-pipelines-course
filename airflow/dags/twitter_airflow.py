@@ -15,6 +15,9 @@ import pandas as pd
 import os.path
 
 RAW_TWEET_DIR = os.path.abspath(os.path.join(__file__, '../../../data/tweets/'))
+CONFIG_FILE = os.path.abspath(os.path.join(__file__,
+                                           '../../../config/prod.cfg'))
+MAX_TWEEPY_PAGE = 300
 
 default_args = {
     'owner': 'admin',
@@ -67,7 +70,7 @@ def search_twitter(**kwargs):
     """ simple search for a query in public tweets"""
     query = kwargs.get('params').get('query')
     config = ConfigParser()
-    config.read('prod.cfg')
+    config.read(CONFIG_FILE)
     auth = OAuthHandler(config.get('twitter', 'consumer_key'),
                         config.get('twitter', 'consumer_secret'))
     auth.set_access_token(config.get('twitter', 'access_token'),
@@ -76,15 +79,21 @@ def search_twitter(**kwargs):
 
     all_tweets = []
     page_num = 0
-    run_date = datetime.strptime(kwargs.get('ds'), '%Y-%m-%d')
-    query += ' since:{} until:{}'.format(run_date - timedelta(days=1),
+    since_date = datetime.strptime(
+        kwargs.get('ds'), '%Y-%m-%d').date() - timedelta(days=1)
+    query += ' since:{} until:{}'.format(since_date.strftime('%Y-%m-%d'),
                                          kwargs.get('ds'))
+    print('searching twitter with: %s' % query)
     for page in Cursor(api.search, q=query, monitor_rate_limit=True,
                        wait_on_rate_limit=True).pages():
         all_tweets.extend([extract_tweet_data(t, query) for t in page])
         page_num += 1
-        if page_num > 200:
+        if page_num > MAX_TWEEPY_PAGE:
             break
+
+    # if it's an empty list, stop here
+    if not len(all_tweets):
+        return
 
     filename = '{}/{}_{}.csv'.format(
         RAW_TWEET_DIR, query, datetime.now().strftime('%m%d%Y%H%M%S'))
@@ -104,12 +113,16 @@ def csv_to_sqlite(directory=RAW_TWEET_DIR, **kwargs):
     conn = sqlite.get_conn()
     for fname in glob.glob('{}/*.csv'.format(directory)):
         if '_read' not in fname:
-            df = pd.read_csv(fname)
-            df.to_sql('tweets', conn, if_exists='append', index=False)
-            shutil.move(fname, fname.replace('.csv', '_read.csv'))
+            try:
+                df = pd.read_csv(fname)
+                df.to_sql('tweets', conn, if_exists='append', index=False)
+                shutil.move(fname, fname.replace('.csv', '_read.csv'))
+            except pd.io.common.EmptyDataError:
+                # probably an io error with another task / open file
+                continue
 
 
-def identify_popular_links(directory=RAW_TWEET_DIR, **kwargs):
+def identify_popular_links(directory=RAW_TWEET_DIR, write_mode='w', **kwargs):
     """ Identify the most popular links from the last day of tweest in the db
         Writes them to latest_links.txt in the RAW_TWEET_DIR
         (or directory kwarg)
@@ -122,7 +135,7 @@ def identify_popular_links(directory=RAW_TWEET_DIR, **kwargs):
     df = pd.read_sql_query(query, conn)
     df.urls = df.urls.map(ast.literal_eval)
     cntr = Counter(itertools.chain.from_iterable(df.urls.values))
-    with open('{}/latest_links.txt'.format(directory), 'w') as latest:
+    with open('{}/latest_links.txt'.format(directory), write_mode) as latest:
         wrtr = writer(latest)
         wrtr.writerow(['url', 'count'])
         wrtr.writerows(cntr.most_common(5))
@@ -148,7 +161,7 @@ id_popular = PythonOperator(task_id='identify_popular_links',
 
 
 email_links = EmailOperator(task_id='email_best_links',
-                            to='MYEMAIL@MYSITE.com',
+                            to='katharine@kjamistan.com',
                             subject='Latest popular links',
                             html_content='Check out the latest!!',
                             files=['{}/latest_links.txt'.format(RAW_TWEET_DIR)],

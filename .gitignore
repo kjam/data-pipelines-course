@@ -10,9 +10,10 @@ venv/*
 *.*/
 *.pid
 *.db
+data/tweets/*.csv
 
 # airflow configs / logs
 airflow.cfg
 unittests.cfg
-logs/*
+*/logs/*
 

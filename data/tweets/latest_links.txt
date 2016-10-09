@@ -1,6 +1,6 @@
 url,count
-http://buff.ly/2dA8awl,5
-https://goo.gl/JvLvE4,5
-https://twitter.com/i/web/status/784719412108652544,5
-https://goo.gl/9p1Wl,5
-https://goo.gl/4Pe962,5
+http://bit.ly/20gNQir,105
+http://bit.ly/2cfWkGK,84
+http://hortonworks.com/blog/data-science-apacheh-hadoop-predicting-airline-delays/,60
+http://tpq.io/p/ml_finance.html,48
+https://tempfil.es,48
