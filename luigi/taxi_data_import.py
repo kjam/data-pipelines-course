@@ -11,7 +11,7 @@ import requests
 import shutil
 
 
-CONFIG_FILE = os.path.abspath(os.path.join(__file__, '../config/prod.cfg'))
+CONFIG_FILE = os.path.abspath(os.path.join(__file__, '../../config/prod.cfg'))
 
 class DownloadTaxiUrls(luigi.Task):
     """ Download NYC Taxi Data for our use. """
