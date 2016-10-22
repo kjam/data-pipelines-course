@@ -18,3 +18,4 @@ airflow.cfg
 unittests.cfg
 */logs/*
 
+django/*
