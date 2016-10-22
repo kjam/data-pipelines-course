@@ -79,5 +79,5 @@ def app(socket, address):
         gevent.sleep(0.1)
 
 if __name__ == '__main__':
-    server = StreamServer(('127.0.0.1', 9999), app)
+    server = StreamServer(('0.0.0.0', 9999), app)
     server.serve_forever()
