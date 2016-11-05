@@ -33,7 +33,8 @@ def get_stock_info(stock, start, end, source='yahoo'):
 
 
 def calc_ratio(price, compare):
-    ''' Calculates percentage ratio when given stock price and comparison price
+    ''' Calculates ratio and converts it into percentage
+        when given stock price and comparison price
     params:
         price: float
         compare: float
