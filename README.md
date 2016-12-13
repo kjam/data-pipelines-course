@@ -1,6 +1,6 @@
 ## Data Pipelines with Python (video edition)
 
-Welcome to the code repository for [Data Pipelines with Python]()! If you have any questions reach out to @kjam on Twitter or GitHub.
+Welcome to the code repository for [Data Pipelines with Python](http://shop.oreilly.com/product/0636920055334.do)! If you have any questions reach out to @kjam on Twitter or GitHub.
 
 ### Code Structure
 
