@@ -8,13 +8,10 @@ Most of the code covered in the videos is here; but not all of it. I highly reco
 
 ### Installation
 
-If you are using Python2, use the requirements.txt file. If you are using Python3, use the py3_requirements.txt file. 
+Install with the requirements.txt file.  
 
 ```pip install -r requirements.txt```
 
-or 
-
-```pip install -r py3_requirements.txt```
 
 ### Yahoo Finance API
 

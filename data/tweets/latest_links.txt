@@ -1,6 +1,1 @@
 url,count
-http://bit.ly/20gNQir,105
-http://bit.ly/2cfWkGK,84
-http://hortonworks.com/blog/data-science-apacheh-hadoop-predicting-airline-delays/,60
-http://tpq.io/p/ml_finance.html,48
-https://tempfil.es,48
