@@ -97,7 +97,7 @@
     - name: fetch application
       become_user: deploy
       git:
-        repo: git@github.com:kjam/data-pipelines-course.git
+        repo: git@github.com:bsweger/data-pipelines-course.git
         dest: /var/www/pipelines
         key_file: ~/.ssh/deploy
         accept_hostkey: yes
