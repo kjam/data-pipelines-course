@@ -161,6 +161,17 @@
     - name: start flower & celery & celerybeat
       shell: systemctl restart celery && systemctl restart flower && systemctl restart celerybeat
 
+    - name: set environment variables
+      become_user: deploy
+      lineinfile:
+        path: ~/.bashrc
+        line: 'export DEPLOY={{ target_environment }}'
+        state: present
+
+    # this is not working, set the above env variable manually until it's fixed
+    # - name: source .bashrc
+    #   command: source /home/deploy/.bashrc
+
   handlers:
     - name: restart rabbitmq
       service: name=rabbitmq-server state=restarted
