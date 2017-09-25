@@ -93,6 +93,8 @@
     - name: change app perms to fetch
       file: path=/var/www/pipelines mode=0777 recurse=yes state=directory
       ignore_errors: yes
+      tags:
+        - update-code
 
     - name: fetch application
       become_user: deploy
@@ -102,11 +104,15 @@
         key_file: ~/.ssh/deploy
         accept_hostkey: yes
         force: yes
+      tags:
+        - update-code
 
     - name: install requirements
       pip: requirements=/var/www/pipelines/requirements.txt virtualenv=/home/deploy/venv
       environment:
           HDF5_DIR: /usr/lib/x86_64-linux-gnu/hdf5/serial/
+      tags:
+        - update-code
 
     - name: make notebooks directory
       file: path=/var/www/pipelines/notebooks state=directory owner=deploy mode=0755 recurse=yes
